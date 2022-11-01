@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="exception-handler-test-suite.xml" />
+	<munit:test name="exception-handler-400-test" doc:id="13f4c253-a5e0-4252-824d-7fa2339734f4" description="Test">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock APIKIT:BAD_REQUEST" doc:id="5ed0f499-f7ac-4b66-b411-1ad5de7b0fe7" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="aopa-netsuite-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:error typeId="APIKIT:BAD_REQUEST" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="b154a2fa-e369-4bc2-88d5-8d9e185ade3d" >
+				<flow-ref doc:name="aopa-netsuite-sapi-main" doc:id="329c6077-a9e9-4baf-8ac9-1e57a7b919be" name="aopa-netsuite-sapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9dd5490a-ac92-4ac7-a44c-1b55636ed420" />
+				</error-handler>
+			</try>
+</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Verify Payload" doc:id="4e28a6aa-8443-4df8-83a3-fb79300933c9" message="Assertion Failed for 400 Exception Handler test" expression="#[payload.errorType]" is='#[MunitTools::equalTo("BAD_REQUEST")]' />
+			<munit-tools:assert-that doc:name="Verify Status" doc:id="6e497b03-3085-423f-971a-885860f60515" message="Assertion Failed for 400 Exception Handler test" expression="#[vars.httpStatus]" is="#[MunitTools::equalTo(400)]" />
+</munit:validation>
+	</munit:test>
+	<munit:test name="exception-handler-401-test" doc:id="2fc326f6-6c4c-4ca1-b61f-fcb5d2d92cb5" description="Test">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock HTTP:BASIC_AUTHENTICATION" doc:id="27978a9d-0473-4e75-8163-da4115981f78" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="aopa-netsuite-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:error typeId="HTTP:BASIC_AUTHENTICATION" />
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<try doc:name="Try" doc:id="7ea052e6-6f1f-45ea-8c31-fb7982929d3d">
+				<flow-ref doc:name="aopa-netsuite-sapi-main" doc:id="3d57dac5-0693-4070-83fa-071398f930f3" name="aopa-netsuite-sapi-main" />
+				<error-handler>
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="cefa92ba-b3c0-429d-9ec5-2192bcab52db" />
+				</error-handler>
+			</try>
+</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Verify Payload" doc:id="fddd1443-abab-48f3-8a3f-deee934e4e1b" message="Assertion Failed for 401 Exception Handler test" expression="#[payload.errorType]" is='#[MunitTools::equalTo("Unauthorized")]' />
+			<munit-tools:assert-that doc:name="Verify Status" doc:id="d784688a-1476-43e2-978f-5b008449bb1e" message="Assertion Failed for 401 Exception Handler test" expression="#[vars.httpStatus]" is="#[MunitTools::equalTo(401)]" />
+</munit:validation>
+	</munit:test>
+		<munit:test name="exception-handler-404-test" doc:id="8ec167e6-5fc8-4393-bb3d-e212c80ed7e3" description="Test">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock APIKIT:NOT_FOUND" doc:id="04b0d984-290f-4853-8901-2281aef9b08c" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="aopa-netsuite-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:error typeId="APIKIT:NOT_FOUND" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="a8984909-bb08-4923-bb65-3c0365fb81c0" >
+				<flow-ref doc:name="aopa-netsuite-sapi-main" doc:id="74d1b5b7-7076-4cae-8f5e-89263da060a6" name="aopa-netsuite-sapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="befa8599-3bd8-4203-85df-f710f33129a0" />
+				</error-handler>
+			</try>
+</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Verify Payload" doc:id="0fbd4a1f-303c-44fb-9fa1-e49e95b9196f" message="Assertion Failed for 404 Exception Handler test" expression="#[payload.errorType]" is='#[MunitTools::equalTo("NOT_FOUND")]' />
+			<munit-tools:assert-that doc:name="Verify Status" doc:id="e0788700-8317-4c0d-9186-37700f185c7a" message="Assertion Failed for 404 Exception Handler test" expression="#[vars.httpStatus]" is="#[MunitTools::equalTo(404)]" />
+</munit:validation>
+	</munit:test>
+	<munit:test name="exception-handler-405-test" doc:id="ab19f0db-2129-403c-b7c0-71274fcf7cea" description="Test">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock APIKIT:METHOD_NOT_ALLOWED" doc:id="d6e86a0a-67f6-4382-ac07-d8f825da0bcd" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="aopa-netsuite-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:METHOD_NOT_ALLOWED" />
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="1fad71aa-646f-494e-bb89-e3a0c3d8bfc5" >
+				<flow-ref doc:name="aopa-netsuite-sapi-main" doc:id="fe76ebe3-3f37-439a-8ac8-7da5230f8a2e" name="aopa-netsuite-sapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="28c99ac7-826a-4dff-a39b-96e9c883d5fe" />
+				</error-handler>
+			</try>
+</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Verify Payload" doc:id="c8c15140-3065-4ed4-b330-c2a63e0658a9" message="Assertion Failed for 405 Exception Handler test" expression="#[payload.errorType]" is='#[MunitTools::equalTo("METHOD_NOT_ALLOWED")]' />
+			<munit-tools:assert-that doc:name="Verify Status" doc:id="0b097fe3-4193-4390-882e-e24ea7a1fc14" message="Assertion Failed for 405 Exception Handler test" expression="#[vars.httpStatus]" is="#[MunitTools::equalTo(405)]" />
+</munit:validation>
+	</munit:test>
+	<munit:test name="exception-handler-406-test" doc:id="84bf158d-2a6c-4c0c-8392-441aaaf6b10c" description="Test">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock APIKIT:NOT_ACCEPTABLE" doc:id="78ca2fb1-dd3a-4c6e-9f5b-3765849c586b" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="aopa-netsuite-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:error typeId="APIKIT:NOT_ACCEPTABLE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="bd8ec84a-1f06-4a2b-b659-1fd05e36e71e" >
+				<flow-ref doc:name="aopa-netsuite-sapi-main" doc:id="bf876e2b-dd91-4e8c-8583-4c9ee7407f28" name="aopa-netsuite-sapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7b5b82d4-0bc7-483b-bd68-e4140f47a3ce" />
+				</error-handler>
+			</try>
+</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Verify Payload" doc:id="f4a146f4-162a-4768-8a23-3a0ce6e79851" message="Assertion Failed for 406 Exception Handler test" expression="#[payload.errorType]" is='#[MunitTools::equalTo("NOT_ACCEPTABLE")]' />
+			<munit-tools:assert-that doc:name="Verify Status" doc:id="bd9a44ff-a6de-453a-add5-adb9444b9fa3" message="Assertion Failed for 406 Exception Handler test" expression="#[vars.httpStatus]" is="#[MunitTools::equalTo(406)]" />
+</munit:validation>
+	</munit:test>
+	<munit:test name="exception-handler-415-test" doc:id="753fc84f-845d-473c-a242-c4c71c910127" description="Test">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock APIKIT:UNSUPPORTED_MEDIA_TYPE" doc:id="d0232c1e-74f3-4720-8031-591eacbe4ac3" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="aopa-netsuite-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:error typeId="APIKIT:UNSUPPORTED_MEDIA_TYPE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="8db08975-0abf-4e9d-90c3-b3762e921601" >
+				<flow-ref doc:name="aopa-netsuite-sapi-main" doc:id="984bb30c-c610-454e-9930-93ebfcb22a87" name="aopa-netsuite-sapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e0880057-e4c9-490c-966e-9e0366ceeced" />
+				</error-handler>
+			</try>
+</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Verify Payload" doc:id="3efbbb0e-4b1b-4da1-8503-fd5e2c483651" message="Assertion Failed for 415 Exception Handler test" expression="#[payload.errorType]" is='#[MunitTools::equalTo("UNSUPPORTED_MEDIA_TYPE")]' />
+			<munit-tools:assert-that doc:name="Verify Status" doc:id="a4cf3193-73cd-47e1-aef6-4567c666c504" message="Assertion Failed for 415 Exception Handler test" expression="#[vars.httpStatus]" is="#[MunitTools::equalTo(415)]" />
+</munit:validation>
+	</munit:test>
+	<munit:test name="exception-handler-500-test" doc:id="967b67f2-f659-488f-bf39-06fdbbe67826" description="Test">
+		<munit:execution>
+			<try doc:name="Try" doc:id="1cd9a8e5-8d35-4932-9cd9-555ec3564840">
+				<flow-ref doc:name="aopa-netsuite-sapi-main" doc:id="bb1d8aa4-8460-44d1-804e-fd87ecf35f33" name="aopa-netsuite-sapi-main" />
+				<error-handler>
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="f62f5390-ccd1-4777-ab62-04a07e1f76f1" />
+				</error-handler>
+			</try>
+		
+</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Verify Payload" doc:id="0263ef5b-ff2e-4c77-ac52-14fc0c60f8e6" message="Assertion Failed for 500 Exception Handler test" expression="#[payload.errorType]" is='#[MunitTools::equalTo("Mule Expression Error")]' />
+			<munit-tools:assert-that doc:name="Verify Status" doc:id="6ec86c68-914c-4a7c-b945-71e65adad5a6" message="Assertion Failed for 500 Exception Handler test" expression="#[vars.httpStatus]" is="#[MunitTools::equalTo(500)]" />
+			
+		</munit:validation>
+	</munit:test>
+	<munit:test name="exception-handler-501-test" doc:id="c6335a9c-6ea7-42e3-a24a-6b29e888ec4a" description="Test">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock APIKIT:NOT_IMPLEMENTED" doc:id="1eaa28ab-608c-4947-ae2c-9e82fdb2d53b" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="aopa-netsuite-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:error typeId="APIKIT:NOT_IMPLEMENTED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<try doc:name="Try" doc:id="6d44c3e3-ab24-403a-89e7-ac0fe340a715">
+				<flow-ref doc:name="aopa-netsuite-sapi-main" doc:id="83ac44cb-a761-4ea8-854e-ca78a11c1390" name="aopa-netsuite-sapi-main" />
+				<error-handler>
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="f01dede9-d23a-4d45-bff3-ce25c2bde4b3" />
+				</error-handler>
+			</try>
+</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Verify Payload" doc:id="0648a8c9-0d11-4bb8-b837-0f014e675e24" message="Assertion Failed for 501 Exception Handler test" expression="#[payload.errorType]" is='#[MunitTools::equalTo("NOT_IMPLEMENTED")]' />
+			<munit-tools:assert-that doc:name="Verify Status" doc:id="7bba88a2-7b5a-40f9-a009-1cd8163fae23" message="Assertion Failed for 501 Exception Handler test" expression="#[vars.httpStatus]" is="#[MunitTools::equalTo(501)]" />
+</munit:validation>
+	</munit:test>
+</mule>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:oauth="http://www.mulesoft.org/schema/mule/oauth"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oauth/current/mule-oauth.xsd">
+	<netsuite:config name="NetSuite_Config" doc:name="NetSuite Config" doc:id="c704aced-bb2a-4f0b-b848-cae867507d1a" >
+		<netsuite:token-based-authentication-connection consumerKey="${netsuite.consumerKey}" consumerSecret="${netsuite.consumerSecret}" tokenId="${netsuite.tokenId}" tokenSecret="${netsuite.tokenKey}" account="${netsuite.accountId}" wsdlVersion="V2020_2" soapPort="services/NetSuitePort_2020_2"/>
+	</netsuite:config>
+	 <global-property doc:name="Global Property" doc:id="9d727ac8-f5a6-4f12-9e24-74ef8d00efa1" doc:description="This Global Property should be removed and set in the Run As -&gt; Runtime Configuration -&gt; Enviromnent Section.  Please view the documentation below for more information.  https://docs.mulesoft.com/mule-runtime/4.3/configuring-properties#setting-environment-variables-in-anypoint-studio" name="runtime.env" value="dev" />
+    <configuration-properties doc:name="Environment Configuration properties" doc:id="d5eb1f9c-5345-4070-aa6d-2b3142a6f2f0" file="properties/${runtime.env}.yaml" />
+	<configuration doc:name="Configuration" doc:id="a4aaa3b4-48cd-4939-8a1d-793509cc3170" defaultErrorHandler-ref="common-exception-handler" />
+	<apikit:config name="aopa-netsuite-sapi-config" api="aopa-netsuite-sapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+	<http:listener-config name="aopa-netsuite-sapi-httpListenerConfig">
+        <http:listener-connection host="localhost" port="${http.listener.port}" readTimeout="${http.listener.timeout}"/>
+    </http:listener-config>
+    <tls:context name="TLS_Context" doc:name="TLS Context" doc:id="934a9a6d-1280-4972-8a9a-b4e806ea0bbb" >
+		<tls:key-store type="jks" path="${https.keystore.path}" keyPassword="${https.keystore.password}" password="${https.keystore.password}"/>
+	</tls:context>
+    <http:request-config name="Netsuite_Rest_API_Access_Token" doc:name="HTTP Request configuration" doc:id="9ac7fb9e-2496-407b-bb6c-f5f5975ef18a" basePath="${netsuite.base_path}" responseTimeout="${https.response_timeout}">
+		<http:request-connection host="${netsuite.host}" protocol="HTTPS" tlsContext="TLS_Context" connectionIdleTimeout="${https.connect_timeout}">
+		</http:request-connection>
+	</http:request-config>
+	<os:object-store name="Token_Manager_Object_store" doc:name="Object store" doc:id="e2210d7e-d3bc-4cab-a1ae-48adbcb5b24f" />
+	<oauth:token-manager-config name="Token_manager_config" doc:name="Token manager config" doc:id="57801b68-c518-4f7e-ba5f-bc9f4b09193c" objectStore="Token_Manager_Object_store" />
+	<http:request-config name="Netsuite_Rest_API_Token"  doc:name="HTTP Request configuration" doc:id="87e058b6-4300-4a8d-9383-2529309a1aea" basePath="${netsuite.base_path}" responseTimeout="${https.response_timeout}">
+		<http:request-connection host="${netsuite.host}" protocol="HTTPS" tlsContext="TLS_Context" port="${netsuite.port}" connectionIdleTimeout="${https.connect_timeout}">
+			<reconnection >
+				<reconnect frequency="${https.reconnect_frequency}" count="${https.reconnect_attempts}" />
+			</reconnection>
+			<http:authentication>
+				<oauth:authorization-code-grant-type localCallbackConfigPath="/callback" externalCallbackUrl="${netsuite.external_callback_url}" state="${netsuitei.state}" localAuthorizationUrl="${netsuite.local_authorization_url}" authorizationUrl="${netsuite.authorization_url}" clientId="${secure::netsuite_api.client_id}" clientSecret="${secure::netsuite_api.client_secret}" scopes='${netsuite_api.scopes}' tokenUrl="${netsuite_api.token_url}" localCallbackConfig="aopa-netsuite-sapi-httpListenerConfig" tokenManager="Token_manager_config">
+					<oauth:custom-parameters >
+						<oauth:custom-parameter key="response_type" value="${netsuite.responseType}" />
+						<oauth:custom-parameter key="prompt" value="${netsuite.prompt}" />
+						<oauth:custom-parameter key="access_type" value="offline" />
+						<oauth:custom-parameter key="include_granted_scopes" value="true" />
+					</oauth:custom-parameters>
+					<oauth:custom-parameter-extractors >
+						<oauth:parameter-extractor paramName="access_type" value="offline" />
+					</oauth:custom-parameter-extractors>
+				</oauth:authorization-code-grant-type>
+				<!--  <oauth:authorization-code-grant-type localCallbackConfig="HTTP_Listener_config" localCallbackUrl="/callback" externalCallbackUrl="https://localhost:8082/callback" localAuthorizationUrl="https://localhost:8082/login" authorizationUrl="https://3773629-sb2.app.netsuite.com/app/login/oauth2/authorize.nl?response_type=code&amp;client_id=d8c47b18667f94112bc905daa10eb50cee617f7eee16ff8e47ea8bb080510415&amp;redirect_uri=https://localhost&amp;scope=rest_webservices&amp;state=ykv2XLx1BpT5Q0F3MRPHb94j" clientId="d8c47b18667f94112bc905daa10eb50cee617f7eee16ff8e47ea8bb080510415" clientSecret="fe221b752a8a66d6f7623eff03d0a8715f7dd94e96a0bc151d64e69aab0b4cbe" scopes='#["rest_webservices"]' tokenUrl="https://3773629-sb2.suitetalk.api.netsuite.com/services/rest/auth/oauth2/v1/token" />
+			--></http:authentication>
+		</http:request-connection>
+	</http:request-config>
+	
+	
+</mule>

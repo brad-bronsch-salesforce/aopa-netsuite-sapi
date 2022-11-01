@@ -1,0 +1,32 @@
+http: 
+  listener:
+    host: "localhost"
+    port: "8081"
+    timeout: "30000"
+
+https:
+  keystore:
+    path: "keystore.jks"
+    password: "password" 
+  connect_timeout: "30000"
+  reconnect_frequency: "30000"
+  reconnect_attempts: "3"
+  response_timeout: "30000"  
+    
+netsuite:
+  consumerKey: "e4d7bf90c164ce2fadf3586821d33be697217d517c122f77e57967c444a49e1c"
+  consumerSecret: "06fbe33fb7aa6ad836d2823c6407ef8f33e44ee66165ec5ec5a37853059dd8aa"
+  tokenId: "b1c5055535ecfaa494f506f252f8f5d80e699fa18051950eb2b921bc3d0ca431"
+  tokenKey: "2f8820c38060fc1b556a29b3d1c68d9dc3f375c834d3edc10ba265d520b3a357"
+  accountId: "6523642_SB1"
+  host: "6523642-sb1.app.netsuite.com/"
+  port: "443"
+  base_path: "/services/rest"
+  external_callback_url: "https://aopa-netsuite-sapi-dev.us-e2.cloudhub.io/callback"
+  state: "ykv2XLx1BpT5Q0F3MRPHb94j"
+  local_authorization_url: "https://aopa-netsuite-sapi-dev.us-e2.cloudhub.io/login"
+  authorization_url: "https://6523642-sb1.app.netsuite.com/app/login/oauth2/authorize.nl"
+  prompt: "consent"
+  responseType: "code" 
+  client_id: ""
+  client_secret: ""

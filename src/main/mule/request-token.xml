@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:oauth="http://www.mulesoft.org/schema/mule/oauth"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oauth/current/mule-oauth.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="ff475344-ff67-481a-8b39-56290e2d142a" />
+	   <http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="3c9acea8-3404-42a3-91c7-ea3e8a5ea0ed" >
+		<http:listener-connection host="localhost" port="8084" />
+	</http:listener-config>
+	<flow name="request-tokenFlow" doc:id="2680a9b0-29b1-4d07-a6e0-b52812e5c76b" >
+<!-- [STUDIO:"Scheduler"]		<scheduler doc:name="Scheduler" doc:id="4d739bc8-08fc-4ae7-bac7-9c24db5c9aa7" >
+			<scheduling-strategy >
+				<fixed-frequency frequency="1" timeUnit="MINUTES"/>
+			</scheduling-strategy>
+		</scheduler> [STUDIO] -->
+		<http:listener doc:name="Listener" doc:id="5e4c0e36-0c9c-404b-b449-2d0285b51135" config-ref="HTTP_Listener_config" path="/token"/>
+		<oauth:retrieve-refresh-token doc:name="Retrieve refresh token" doc:id="945adc1b-9f5c-47c3-8176-f208b3a8dc24" tokenManager="Token_manager_config">
+		</oauth:retrieve-refresh-token>
+		<ee:transform doc:name="Creating Request Body" doc:id="2fb0c5aa-d09d-4dd9-a79e-cba93c92f5b8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/x-www-form-urlencoded
+---
+{
+	"grant_type" : "refresh_token",
+	"refresh_token": payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="POST" doc:name="Request to Get New Access Token" doc:id="e372d054-b690-46f2-ad04-6f1f66d90234" config-ref="Netsuite_Rest_API_Access_Token" path="/auth/oauth2/v1/token">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"content-type" : "application/x-www-form-urlencoded"
+}]]]></http:headers>
+		</http:request>
+		<os:store doc:name="Store" doc:id="3b4919f2-8500-4ffb-8920-f20534a68516" key="accessToken" objectStore="Object_store">
+			<os:value ><![CDATA[#[payload.access_token]]]></os:value>
+		</os:store>
+		<logger level="INFO" doc:name="Logger" doc:id="41d6da2c-4900-48f9-897f-218c4566d3f9" message='#["New access Token Received"]'/>
+	</flow>
+	<flow name="retrieve-access-Token" doc:id="535b1345-3df6-40d8-ae94-07c7450d22f6" >
+		<os:retrieve doc:name="Retrieve" doc:id="724db42b-7635-414f-a9c5-5f9347c98904" key="accessToken" objectStore="Object_store" target="accessToken">
+			<os:default-value ><![CDATA[1234]]></os:default-value>
+		</os:retrieve>
+		
+	</flow> 
+	</mule>

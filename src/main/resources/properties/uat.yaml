@@ -1,0 +1,13 @@
+http: 
+  listener:
+    host: "localhost"
+    port: "8081"
+    timeout: "30000"
+    
+    
+netsuite:
+  consumerKey: "9f486379c75431878fe33ffa451505f9c91d5ad5f70c6ef6b450bb7544d4eedb"
+  consumerSecret: "d44d0efbf9456c765b748453635e08f7eb868ffa4dcebe4a767a212c7812fd84"
+  tokenId: "c823cf35b671235cf196fde078fd8b068a9dc07a628c7af9c9921499ac7837f9"
+  tokenKey: "88ee7c2cb83f54d95ef981033b6835453eb79629e08e30ce4aac5b1f76e0c11e"
+  accountId: "6523642"

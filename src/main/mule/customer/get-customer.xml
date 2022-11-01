@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<flow name="get-customerFlow" doc:id="f4c93c61-9ee0-4951-afec-0368adb6bbc6" >
+		<logger level="INFO" doc:name="To Be Removed" doc:id="eead904f-292a-4536-95a9-ce951055c149" message='"get customer flow started"'/>
+	</flow>
+</mule>

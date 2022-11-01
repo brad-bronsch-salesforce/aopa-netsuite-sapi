@@ -1,0 +1,72 @@
+#%RAML 1.0
+title: aopa-netsuite-sapi
+version: v1
+mediaType: [application/json]
+protocols: [HTTP, HTTPS]
+
+traits:
+  error-response: !include trait-errorresponse/1.0.0/trait-errorresponse.raml
+
+securitySchemes:
+  securityCustomScheme: !include security-scheme/customSecurityScheme.raml
+
+securedBy:
+  - securityCustomScheme
+
+uses:
+  dataTypeLibrary: dataTypes/library.raml
+
+
+/health:
+  is: [error-response]
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: 
+              {
+                "message" : "Netsuite system layer called successfully"
+              }
+
+
+/customer:
+  is: [error-response]
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: dataTypeLibrary.getcustomerResponse
+            example: !include examples/customer/getcustomerResponse.raml
+
+/salesOrder:
+  is: [error-response]
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: dataTypeLibrary.getsalesOrderResponse
+            example: !include examples/salesOrder/getsalesOrderResponse.raml
+
+/customerPayment:
+  is: [error-response]
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: 
+            example:
+
+/invoice:
+  is: [error-response]
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: 
+            example:
+              
